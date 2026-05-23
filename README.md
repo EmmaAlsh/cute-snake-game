@@ -40,4 +40,14 @@ python main.py
 ```
 ## Credits
 
-Cookie PNGs by Vecteezy
+The following images were used in this project:
+
+- Cookie PNG — Bolea Ionela Larisa  
+- Chocolate PNG — Thoif Creativa  
+- Ice Cream PNG — Rosario Laperal  
+
+All assets are sourced from Vecteezy:
+https://www.vecteezy.com
+
+All rights belong to their respective creators.
+This project is for educational purposes only.
