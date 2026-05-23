@@ -3,7 +3,7 @@ from pygame.math import Vector2
 
 class SNAKE: 
   def __init__(self):
-    self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)] #3 bloques uno al lado del otro
+    self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
     self.direction = Vector2(1,0)
     self.new_block = False
 
@@ -21,7 +21,7 @@ class SNAKE:
       self.body = body_copy[:]
       self.new_block = False
     else:
-      body_copy = self.body[:-1] #devuelve los primeros 2 elementos de self.body 
+      body_copy = self.body[:-1]
       body_copy.insert(0, body_copy[0] + self.direction)
       self.body = body_copy[:]
   
@@ -29,19 +29,50 @@ class SNAKE:
     self.new_block = True
 
 class FRUIT:
-  def __init__(self): #se ejecuta automaticamente al crear el objeto
+  def __init__(self):
+    self.load_images()
     self.randomize()
-  
-  def draw_fruit(self):
-    fruit_rect = pygame.Rect(int(self.pos.x * cell_size) , int(self.pos.y * cell_size),cell_size,cell_size )
-    screen.blit(cookie, fruit_rect)
-    #pygame.draw.rect(screen, (126,166,114), fruit_rect) #dibujo el rectangulo en pantalla
-  
-  def randomize(self):
-    self.x = random.randint(0,cell_number - 1)
-    self.y = random.randint(0,cell_number - 1)
-    self.pos = Vector2(self.x,self.y)
 
+  def load_images(self):
+    cookie = pygame.image.load('Graphics/cookie.png').convert_alpha()
+    icecream = pygame.image.load('Graphics/icecream.png').convert_alpha()
+    chocolate = pygame.image.load('Graphics/chocolate.png').convert_alpha()
+
+    self.cookie = pygame.transform.scale(cookie, (40,40))
+    self.icecream = pygame.transform.scale(icecream, (70,70))
+    self.chocolate = pygame.transform.scale(chocolate, (70,70))
+
+  def randomize(self):
+    self.x = random.randint(0, cell_number - 1)
+    self.y = random.randint(0, cell_number - 2)  # por si es 2 celdas verticales
+
+    self.pos = Vector2(self.x, self.y)
+
+    self.type = random.choice(["cookie", "big"])
+
+    if self.type == "cookie":
+      self.current_image = self.cookie
+      self.size_cells = (1,1)
+    else:
+      self.current_image = random.choice([self.icecream, self.chocolate])
+      self.size_cells = (1,2)
+
+  def draw_fruit(self):
+    # posición base (top-left celda)
+    x = int(self.pos.x * cell_size)
+    y = int(self.pos.y * cell_size)
+
+    if self.size_cells == (1,1):
+      rect = pygame.Rect(x, y, cell_size, cell_size)
+      image_rect = self.current_image.get_rect(center=rect.center)
+      screen.blit(self.current_image, image_rect)
+
+    else:
+      # ocupa 2 celdas pero UNA sola imagen
+      rect = pygame.Rect(x, y, cell_size, cell_size * 2)
+      image_rect = self.current_image.get_rect(center=rect.center)
+      screen.blit(self.current_image, image_rect)
+      
 class MAIN: 
   def __init__(self):
     self.snake = SNAKE()
@@ -57,9 +88,19 @@ class MAIN:
     self.snake.draw_snake()
   
   def check_collision(self):
-    if self.fruit.pos == self.snake.body[0]:
-      self.fruit.randomize()
-      self.snake.add_block()
+    snake_head = self.snake.body[0]
+    fx = self.fruit.pos.x
+    fy = self.fruit.pos.y
+
+    if self.fruit.size_cells == (1,1):
+      if snake_head == Vector2(fx, fy):
+        self.fruit.randomize()
+        self.snake.add_block()
+
+    else:
+      if snake_head == Vector2(fx, fy) or snake_head == Vector2(fx, fy + 1):
+        self.fruit.randomize()
+        self.snake.add_block()
 
   def check_fail(self):
     if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
@@ -70,46 +111,49 @@ class MAIN:
         self.game_over()
   
   def game_over(self):
-    pygame.quit() # apaga pygame 
-    sys.exit() # cierra el programa
+    pygame.quit()
+    sys.exit()
 
 
 pygame.init()
 cell_size = 40 
 cell_number = 20 
+
 screen = pygame.display.set_mode((cell_number * cell_size,cell_number * cell_size))
 clock = pygame.time.Clock()
-cookie = pygame.image.load('Graphics/cookie.png').convert_alpha()
-cookie = pygame.transform.scale(cookie, (40,40))
 
-SCREEN_UPDATE = pygame.USEREVENT #event
-pygame.time.set_timer(SCREEN_UPDATE,150) #150 miiliseconds
+SCREEN_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SCREEN_UPDATE,150)
 
 main_game = MAIN()
 
 while True: 
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
-      pygame.quit() # apaga pygame 
-      sys.exit() # cierra el programa
+      pygame.quit()
+      sys.exit()
+
     if event.type == SCREEN_UPDATE:
       main_game.update()
+
     if event.type == pygame.KEYDOWN: 
       if event.key == pygame.K_UP:
         if main_game.snake.direction.y != 1: 
           main_game.snake.direction = Vector2(0,-1)
+
       if event.key == pygame.K_DOWN:
         if main_game.snake.direction.y != -1:
           main_game.snake.direction = Vector2(0,1)
+
       if event.key == pygame.K_LEFT:
-        if main_game.snake.direction.y != -1:
+        if main_game.snake.direction.x != 1:
           main_game.snake.direction = Vector2(-1,0)
+
       if event.key == pygame.K_RIGHT:
         if main_game.snake.direction.x != -1:
           main_game.snake.direction = Vector2(1,0)
 
-
   screen.fill((214,212,94))
   main_game.draw_elements()
   pygame.display.update()
-  clock.tick(60) # para que no ande tan rapido
+  clock.tick(60)
