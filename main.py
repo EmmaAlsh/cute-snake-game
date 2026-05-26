@@ -3,7 +3,7 @@ from pygame.math import Vector2
 
 def load_graphic(path):
     image = pygame.image.load(path).convert_alpha()
-    image = pygame.transform.scale(image, (cell_size, cell_size))
+    image = pygame.transform.scale(image, (cell_size,cell_size))
     return image
 
 class SNAKE: 
@@ -22,23 +22,23 @@ class SNAKE:
     self.tail_right = load_graphic('Graphics/tail_right.png')
     self.tail_left = load_graphic('Graphics/tail_left.png')
 
-    self.body_vertical = pygame.image.load('Graphics/body_vertical.png').convert_alpha()
-    self.body_horizontal = pygame.image.load('Graphics/body_horizontal.png').convert_alpha()
+    self.body_vertical = load_graphic('Graphics/body_vertical.png')
+    self.body_horizontal = load_graphic('Graphics/body_horizontal.png')
 
-    self.body_vertical_bow = pygame.image.load('Graphics/body_vertical_bow.png').convert_alpha()
-    self.body_horizontal_bow = pygame.image.load('Graphics/body_horizontal_bow.png').convert_alpha()
-    self.body_left_bow = pygame.image.load('Graphics/body_left_bow.png').convert_alpha()
-    self.body_right_bow = pygame.image.load('Graphics/body_right_bow.png').convert_alpha()
+    self.body_vertical_bow = load_graphic('Graphics/body_vertical_bow.png')
+    self.body_horizontal_bow = load_graphic('Graphics/body_horizontal_bow.png')
+    self.body_left_bow = load_graphic('Graphics/body_left_bow.png')
+    self.body_right_bow = load_graphic('Graphics/body_right_bow.png')
 
-    self.body_tr_bow = pygame.image.load('Graphics/body_tr_bow.png').convert_alpha()
-    self.body_tl_bow = pygame.image.load('Graphics/body_tl_bow.png').convert_alpha()
-    self.body_br_bow = pygame.image.load('Graphics/body_br_bow.png').convert_alpha()
-    self.body_bl_bow = pygame.image.load('Graphics/body_bl_bow.png').convert_alpha()
+    self.body_tr_bow = load_graphic('Graphics/body_tr_bow.png')
+    self.body_tl_bow = load_graphic('Graphics/body_tl_bow.png')
+    self.body_br_bow = load_graphic('Graphics/body_br_bow.png')
+    self.body_bl_bow = load_graphic('Graphics/body_bl_bow.png')
 
-    self.body_tr = pygame.image.load('Graphics/body_tr.png').convert_alpha()
-    self.body_tl = pygame.image.load('Graphics/body_tl.png').convert_alpha()
-    self.body_br = pygame.image.load('Graphics/body_br.png').convert_alpha()
-    self.body_bl = pygame.image.load('Graphics/body_bl.png').convert_alpha()
+    self.body_tr = load_graphic('Graphics/body_tr.png')
+    self.body_tl = load_graphic('Graphics/body_tl.png')
+    self.body_br = load_graphic('Graphics/body_br.png')
+    self.body_bl = load_graphic('Graphics/body_bl.png')
 
 
   def draw_snake(self):
@@ -53,9 +53,24 @@ class SNAKE:
         screen.blit(self.head, block_rect)
       elif index == len(self.body) - 1: 
         screen.blit(self.tail, block_rect)
-
       else: 
-        pygame.draw.rect(screen, (150,100,100), block_rect)
+        previous_block = self.body[index + 1] - block
+        next_block = self.body[index - 1] - block 
+        if previous_block.x ==  next_block.x : #vertical block
+          screen.blit(self.body_vertical, block_rect)
+        elif previous_block.y ==  next_block.y : #horizontal block
+          screen.blit(self.body_horizontal, block_rect)
+        else: 
+          if previous_block.x == -1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == -1:
+            screen.blit(self.body_tl, block_rect)
+          elif previous_block.x == -1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == -1:
+            screen.blit(self.body_bl, block_rect)
+          elif previous_block.x == 1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == 1:
+            screen.blit(self.body_tr, block_rect)
+          elif previous_block.x == 1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == 1:
+            screen.blit(self.body_br, block_rect)
+
+
   
   def update_head_graphics(self): 
     head_relation = self.body[1] - self.body[0]
