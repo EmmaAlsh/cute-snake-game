@@ -17,10 +17,10 @@ class SNAKE:
     self.head_right = load_graphic('Graphics/head_right.png')
     self.head_left = load_graphic('Graphics/head_left.png')
 
-    self.tail_up = pygame.image.load('Graphics/tail_up.png').convert_alpha()
-    self.tail_down = pygame.image.load('Graphics/tail_down.png').convert_alpha()
-    self.tail_right = pygame.image.load('Graphics/tail_right.png').convert_alpha()
-    self.tail_left = pygame.image.load('Graphics/tail_left.png').convert_alpha()
+    self.tail_up = load_graphic('Graphics/tail_up.png')
+    self.tail_down = load_graphic('Graphics/tail_down.png')
+    self.tail_right = load_graphic('Graphics/tail_right.png')
+    self.tail_left = load_graphic('Graphics/tail_left.png')
 
     self.body_vertical = pygame.image.load('Graphics/body_vertical.png').convert_alpha()
     self.body_horizontal = pygame.image.load('Graphics/body_horizontal.png').convert_alpha()
@@ -43,6 +43,7 @@ class SNAKE:
 
   def draw_snake(self):
     self.update_head_graphics()
+    self.update_tail_graphics()
     for index,block in enumerate(self.body):
       x_pos = int(block.x * cell_size)
       y_pos = int(block.y * cell_size)
@@ -50,6 +51,9 @@ class SNAKE:
 
       if index == 0: 
         screen.blit(self.head, block_rect)
+      elif index == len(self.body) - 1: 
+        screen.blit(self.tail, block_rect)
+
       else: 
         pygame.draw.rect(screen, (150,100,100), block_rect)
   
@@ -60,11 +64,19 @@ class SNAKE:
     elif head_relation == Vector2(0,1): self.head = self.head_up
     elif head_relation == Vector2(0,-1): self.head = self.head_down
 
+  def update_tail_graphics(self):
+    tail_relation = self.body[-2] - self.body[-1]
+    if tail_relation == Vector2(1,0): self.tail = self.tail_left
+    elif tail_relation == Vector2(-1,0): self.tail = self.tail_right
+    elif tail_relation == Vector2(0,1): self.tail = self.tail_up
+    elif tail_relation == Vector2(0,-1): self.tail = self.tail_down
     #for block in self.body:
     #  x_pos = int(block.x * cell_size)
     #  y_pos = int(block.y * cell_size)
     #  block_rect = pygame.Rect(x_pos , y_pos,cell_size,cell_size )
     #  pygame.draw.rect(screen, (127,174,231), block_rect) 
+
+
 
   def move_snake(self):
     if self.new_block == True: 
