@@ -1,5 +1,10 @@
 import pygame, sys, random
-from pygame.math import Vector2 
+from pygame.math import Vector2
+
+def load_graphic(path):
+    image = pygame.image.load(path).convert_alpha()
+    image = pygame.transform.scale(image, (cell_size, cell_size))
+    return image
 
 class SNAKE: 
   def __init__(self):
@@ -7,10 +12,10 @@ class SNAKE:
     self.direction = Vector2(1,0)
     self.new_block = False
 
-    self.head_up = pygame.image.load('Graphics/head_up.png').convert_alpha()
-    self.head_down = pygame.image.load('Graphics/head_down.png').convert_alpha()
-    self.head_right = pygame.image.load('Graphics/head_right.png').convert_alpha()
-    self.head_left = pygame.image.load('Graphics/head_left.png').convert_alpha()
+    self.head_up = load_graphic('Graphics/head_up.png')
+    self.head_down = load_graphic('Graphics/head_down.png')
+    self.head_right = load_graphic('Graphics/head_right.png')
+    self.head_left = load_graphic('Graphics/head_left.png')
 
     self.tail_up = pygame.image.load('Graphics/tail_up.png').convert_alpha()
     self.tail_down = pygame.image.load('Graphics/tail_down.png').convert_alpha()
@@ -37,11 +42,29 @@ class SNAKE:
 
 
   def draw_snake(self):
-    for block in self.body:
+    self.update_head_graphics()
+    for index,block in enumerate(self.body):
       x_pos = int(block.x * cell_size)
       y_pos = int(block.y * cell_size)
-      block_rect = pygame.Rect(x_pos , y_pos,cell_size,cell_size )
-      pygame.draw.rect(screen, (127,174,231), block_rect) 
+      block_rect = pygame.Rect(x_pos,y_pos,cell_size,cell_size)
+
+      if index == 0: 
+        screen.blit(self.head, block_rect)
+      else: 
+        pygame.draw.rect(screen, (150,100,100), block_rect)
+  
+  def update_head_graphics(self): 
+    head_relation = self.body[1] - self.body[0]
+    if head_relation == Vector2(1,0): self.head = self.head_left 
+    elif head_relation == Vector2(-1,0): self.head = self.head_right
+    elif head_relation == Vector2(0,1): self.head = self.head_up
+    elif head_relation == Vector2(0,-1): self.head = self.head_down
+
+    #for block in self.body:
+    #  x_pos = int(block.x * cell_size)
+    #  y_pos = int(block.y * cell_size)
+    #  block_rect = pygame.Rect(x_pos , y_pos,cell_size,cell_size )
+    #  pygame.draw.rect(screen, (127,174,231), block_rect) 
 
   def move_snake(self):
     if self.new_block == True: 
