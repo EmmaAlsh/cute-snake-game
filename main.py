@@ -10,6 +10,13 @@ class SNAKE:
   def __init__(self):
     self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
     self.direction = Vector2(1,0)
+
+    self.turn_frames = 0  # cuántos frames mostrar el bow de curva
+    self.turn_bow = None  # qué gráfico bow de curva mostrar
+
+    self.previous_direction = Vector2(1,0)
+    self.just_turned = False
+
     self.new_block = False
 
     self.head_up = load_graphic('Graphics/head_up.png')
@@ -25,8 +32,8 @@ class SNAKE:
     self.body_vertical = load_graphic('Graphics/body_vertical.png')
     self.body_horizontal = load_graphic('Graphics/body_horizontal.png')
 
-    self.body_vertical_bow = load_graphic('Graphics/body_vertical_bow.png')
-    self.body_horizontal_bow = load_graphic('Graphics/body_horizontal_bow.png')
+    self.body_up_bow = load_graphic('Graphics/body_vertical_bow.png')
+    self.body_down_bow = load_graphic('Graphics/body_down_bow.png')
     self.body_left_bow = load_graphic('Graphics/body_left_bow.png')
     self.body_right_bow = load_graphic('Graphics/body_right_bow.png')
 
@@ -40,37 +47,56 @@ class SNAKE:
     self.body_br = load_graphic('Graphics/body_br.png')
     self.body_bl = load_graphic('Graphics/body_bl.png')
 
-
   def draw_snake(self):
     self.update_head_graphics()
     self.update_tail_graphics()
-    for index,block in enumerate(self.body):
-      x_pos = int(block.x * cell_size)
-      y_pos = int(block.y * cell_size)
-      block_rect = pygame.Rect(x_pos,y_pos,cell_size,cell_size)
-
-      if index == 0: 
-        screen.blit(self.head, block_rect)
-      elif index == len(self.body) - 1: 
-        screen.blit(self.tail, block_rect)
-      else: 
-        previous_block = self.body[index + 1] - block
-        next_block = self.body[index - 1] - block 
-        if previous_block.x ==  next_block.x : #vertical block
-          screen.blit(self.body_vertical, block_rect)
-        elif previous_block.y ==  next_block.y : #horizontal block
-          screen.blit(self.body_horizontal, block_rect)
-        else: 
-          if previous_block.x == -1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == -1:
-            screen.blit(self.body_tl, block_rect)
-          elif previous_block.x == -1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == -1:
-            screen.blit(self.body_bl, block_rect)
-          elif previous_block.x == 1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == 1:
-            screen.blit(self.body_tr, block_rect)
-          elif previous_block.x == 1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == 1:
-            screen.blit(self.body_br, block_rect)
-
-
+    for index, block in enumerate(self.body):
+        x_pos = int(block.x * cell_size)
+        y_pos = int(block.y * cell_size)
+        block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
+        if index == 0:
+          screen.blit(self.head, block_rect)
+        elif index == len(self.body) - 1:
+          screen.blit(self.tail, block_rect)
+        else:
+          previous_block = self.body[index + 1] - block  # hacia la cola
+          next_block     = self.body[index - 1] - block  # hacia la cabeza
+          is_curve = previous_block.x != next_block.x and previous_block.y != next_block.y
+          if index == 1:
+            if self.turn_frames > 0 and is_curve:
+              if   (previous_block.x == -1 and next_block.y == -1) or (previous_block.y == -1 and next_block.x == -1):
+                  screen.blit(self.body_tl_bow, block_rect)
+              elif (previous_block.x == -1 and next_block.y ==  1) or (previous_block.y ==  1 and next_block.x == -1):
+                  screen.blit(self.body_bl_bow, block_rect)
+              elif (previous_block.x ==  1 and next_block.y == -1) or (previous_block.y == -1 and next_block.x ==  1):
+                  screen.blit(self.body_tr_bow, block_rect)
+              elif (previous_block.x ==  1 and next_block.y ==  1) or (previous_block.y ==  1 and next_block.x ==  1):
+                  screen.blit(self.body_br_bow, block_rect)
+            else: 
+              if self.previous_direction == Vector2(0, -1):
+                  screen.blit(self.body_up_bow, block_rect)
+              elif self.previous_direction == Vector2(0, 1):
+                  screen.blit(self.body_down_bow, block_rect)
+              elif self.previous_direction == Vector2(-1, 0):
+                  screen.blit(self.body_left_bow, block_rect)
+              elif self.previous_direction == Vector2(1, 0):
+                  screen.blit(self.body_right_bow, block_rect)
+          else:
+            # Resto del cuerpo → gráficos normales
+            if not is_curve:
+                if previous_block.x == next_block.x:
+                    screen.blit(self.body_vertical, block_rect)
+                else:
+                    screen.blit(self.body_horizontal, block_rect)
+            else:
+                if   (previous_block.x == -1 and next_block.y == -1) or (previous_block.y == -1 and next_block.x == -1):
+                    screen.blit(self.body_tl, block_rect)
+                elif (previous_block.x == -1 and next_block.y ==  1) or (previous_block.y ==  1 and next_block.x == -1):
+                    screen.blit(self.body_bl, block_rect)
+                elif (previous_block.x ==  1 and next_block.y == -1) or (previous_block.y == -1 and next_block.x ==  1):
+                    screen.blit(self.body_tr, block_rect)
+                elif (previous_block.x ==  1 and next_block.y ==  1) or (previous_block.y ==  1 and next_block.x ==  1):
+                    screen.blit(self.body_br, block_rect)
   
   def update_head_graphics(self): 
     head_relation = self.body[1] - self.body[0]
@@ -94,11 +120,20 @@ class SNAKE:
 
 
   def move_snake(self):
+
+    self.just_turned = self.direction != self.previous_direction
+    if self.just_turned:
+        self.turn_frames = 3  # mostrá el bow de curva por 3 frames
+    elif self.turn_frames > 0:
+        self.turn_frames -= 1
+    self.previous_direction = self.direction.copy()
+
     if self.new_block == True: 
       body_copy = self.body[:] 
       body_copy.insert(0, body_copy[0] + self.direction)
       self.body = body_copy[:]
       self.new_block = False
+
     else:
       body_copy = self.body[:-1]
       body_copy.insert(0, body_copy[0] + self.direction)
