@@ -9,7 +9,7 @@ def load_graphic(path):
 class SNAKE: 
   def __init__(self):
     self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
-    self.direction = Vector2(1,0)
+    self.direction = Vector2(0,0)
 
     self.turn_frames = 0  # cuántos frames mostrar el bow de curva
     self.turn_bow = None  # qué gráfico bow de curva mostrar
@@ -18,7 +18,7 @@ class SNAKE:
     self.just_turned = False
 
     self.new_block = False
-
+    
     self.head_up = load_graphic('Graphics/head_up.png')
     self.head_down = load_graphic('Graphics/head_down.png')
     self.head_right = load_graphic('Graphics/head_right.png')
@@ -41,6 +41,10 @@ class SNAKE:
     self.body_tl_bow = load_graphic('Graphics/body_tl_bow.png')
     self.body_br_bow = load_graphic('Graphics/body_br_bow.png')
     self.body_bl_bow = load_graphic('Graphics/body_bl_bow.png')
+    self.body_t_bow = load_graphic('Graphics/body_t_bow.png')
+    self.body_b_bow = load_graphic('Graphics/body_b_bow.png')
+    self.body_l_bow = load_graphic('Graphics/body_l_bow.png')
+    self.body_r_bow = load_graphic('Graphics/body_r_bow.png')
 
     self.body_tr = load_graphic('Graphics/body_tr.png')
     self.body_tl = load_graphic('Graphics/body_tl.png')
@@ -65,15 +69,42 @@ class SNAKE:
           next_block     = self.body[index - 1] - block  # hacia la cabeza
           is_curve = previous_block.x != next_block.x and previous_block.y != next_block.y
           if index == 1:
+            if self.direction == Vector2(0,0):
+              screen.blit(self.body_right_bow, block_rect)
             if self.turn_frames > 0 and is_curve:
-              if   (previous_block.x == -1 and next_block.y == -1) or (previous_block.y == -1 and next_block.x == -1):
-                  screen.blit(self.body_tl_bow, block_rect)
-              elif (previous_block.x == -1 and next_block.y ==  1) or (previous_block.y ==  1 and next_block.x == -1):
-                  screen.blit(self.body_bl_bow, block_rect)
-              elif (previous_block.x ==  1 and next_block.y == -1) or (previous_block.y == -1 and next_block.x ==  1):
-                  screen.blit(self.body_tr_bow, block_rect)
-              elif (previous_block.x ==  1 and next_block.y ==  1) or (previous_block.y ==  1 and next_block.x ==  1):
-                  screen.blit(self.body_br_bow, block_rect)
+              # esquina TL
+              if (previous_block.x == -1 and next_block.y == -1) or \
+                (previous_block.y == -1 and next_block.x == -1):
+
+                  if self.direction == Vector2(0,-1):      # izquierda -> arriba
+                      screen.blit(self.body_tl_bow, block_rect)
+                  else:                                    # arriba -> izquierda
+                      screen.blit(self.body_l_bow, block_rect)
+              # esquina BL
+              elif (previous_block.x == -1 and next_block.y == 1) or \
+                  (previous_block.y == 1 and next_block.x == -1):
+
+                  if self.direction == Vector2(0,1):       # izquierda -> abajo
+                      screen.blit(self.body_b_bow, block_rect)
+                  else:                                    # abajo -> izquierda
+                      screen.blit(self.body_bl_bow, block_rect)
+              
+              # esquina TR
+              elif (previous_block.x == 1 and next_block.y == -1) or \
+                  (previous_block.y == -1 and next_block.x == 1):
+
+                  if self.direction == Vector2(1,0):       # arriba -> derecha
+                      screen.blit(self.body_tr_bow, block_rect)
+                  else:                                    # derecha -> arriba
+                      screen.blit(self.body_t_bow, block_rect)
+
+              elif (previous_block.x == 1 and next_block.y == 1) or \
+                  (previous_block.y == 1 and next_block.x == 1):
+
+                  if self.direction == Vector2(1,0):      # abajo -> derecha
+                      screen.blit(self.body_r_bow, block_rect)
+                  else:                                    # izquierda -> abajo
+                      screen.blit(self.body_br_bow, block_rect)
             else: 
               if self.previous_direction == Vector2(0, -1):
                   screen.blit(self.body_up_bow, block_rect)
@@ -144,6 +175,10 @@ class SNAKE:
 
   def play_crunch_sound(self):
     self.crunch_sound.play()
+
+  def reset(self):
+    self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
+    self.direction = Vector2(0,0)
 
 class FRUIT:
   def __init__(self):
@@ -239,8 +274,7 @@ class MAIN:
         self.game_over()
   
   def game_over(self):
-    pygame.quit()
-    sys.exit()
+    self.snake.reset()
 
   def draw_grass(self):
     grass_color = (210,208,87)
