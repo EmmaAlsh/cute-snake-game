@@ -1,46 +1,60 @@
-# Cute Snake Game
+# 🐍💕 Cute Snake Game
 
-A cute version of the classic Snake game made with Python and Pygame.
+## A cute version of the classic Snake game made with Python and Pygame.
 
-## 🎮 How to play
-- Arrow keys to move
-- Eat the red food to grow
-- Don’t hit yourself or the walls
+This project recreates the traditional Snake gameplay while adding custom artwork, animated body turns, multiple food types, sound effects, and a polished visual style.
 
-## 🚀 Run the game
+---
+ 
+## 🕹️ How to Play
+ 
+- **Arrow keys** to move
+- **Eat sweets** to grow
+- **Don't hit yourself** or the walls — or it's game over!
+
+---
+
+## Demo
+
+![Cute Snake Gameplay](images/gameplay.png)
+
+---
+
+## 🛠️ Installation
+
+### Requirements
+- Python 3.10+
+- [Python extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- Pygame *(installed automatically with `pip install -r requirements.txt`)*
+
+### Running the Game
+
+### 1. Clone this repository.
 
 ```bash
-pip install -r requirements.txt
-python main.py
+   git clone https://github.com/EmmaAlsh/cute-snake-game.git
+   cd cute-snake-game
 ```
 
-## Instalación
+### 2. Run on Visual Studio Code 
+Open `main.py` and press ▶ Play
 
-1. Cloná el repositorio
-```bash
-   git clone https://github.com/tu-usuario/snake-game
-   cd snake-game
-```
 
-2. Creá y activá el entorno virtual
-```bash
-   python3 -m venv venv
-   source venv/bin/activate  # Mac/Linux
-   venv\Scripts\activate     # Windows
-```
+---
 
-3. Instalá las dependencias
-```bash
-   pip install -r requirements.txt
-```
+## ✨ Technical Highlights
 
-4. Corré el juego
-```bash
-   python3 main.py
-```
-## Credits
+This project demonstrates:
 
-The following images were used in this project:
+- Object-Oriented Programming (OOP)
+- Event-driven game development with Pygame
+- Sprite rendering and custom animation logic
+- Grid-based movement systems
+- Collision detection
+- State management (menu, gameplay, game over)
+- Sound integration
+
+## The following images were used in this project:
 
 - Cookie PNG — Bolea Ionela Larisa  
 - Chocolate PNG — Thoif Creativa  
