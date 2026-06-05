@@ -16,7 +16,7 @@ This project recreates the traditional Snake gameplay while adding custom artwor
 
 ## Demo
 
-![Cute Snake Gameplay](images/gameplay.png)
+![Cute Snake Gameplay](Images/gameplay.png)
 
 ---
 
