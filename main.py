@@ -1,20 +1,22 @@
 import pygame, sys, random
 from pygame.math import Vector2
 
+# load_graphic takes the path of an image,
+# loads it and resizes it to a specific size.
 def load_graphic(path):
-    image = pygame.image.load(path).convert_alpha()
-    image = pygame.transform.scale(image, (cell_size,cell_size))
-    return image
+  image = pygame.image.load(path).convert_alpha()
+  image = pygame.transform.scale(image, (cell_size,cell_size))
+  return image
 
 class SNAKE: 
   def __init__(self):
     self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
     self.direction = Vector2(0,0)
 
-    self.turn_frames = 0  # cuántos frames mostrar el bow de curva
-    self.turn_bow = None  # qué gráfico bow de curva mostrar
+    self.turn_frames = 0  
+    self.turn_bow = None 
 
-    self.previous_direction = Vector2(1,0)
+    self.previous_direction = Vector2(1,0) 
     self.just_turned = False
 
     self.new_block = False
@@ -60,15 +62,15 @@ class SNAKE:
         x_pos = int(block.x * cell_size)
         y_pos = int(block.y * cell_size)
         block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
-        if index == 0:
+        if index == 0: # head
           screen.blit(self.head, block_rect)
-        elif index == len(self.body) - 1:
+        elif index == len(self.body) - 1: # tail
           screen.blit(self.tail, block_rect)
         else:
-          previous_block = self.body[index + 1] - block  # hacia la cola
-          next_block     = self.body[index - 1] - block  # hacia la cabeza
+          previous_block = self.body[index + 1] - block  
+          next_block     = self.body[index - 1] - block  
           is_curve = previous_block.x != next_block.x and previous_block.y != next_block.y
-          if index == 1:
+          if index == 1: 
             if self.direction == Vector2(0,0):
               screen.blit(self.body_right_bow, block_rect)
             if self.turn_frames > 0 and is_curve:
@@ -115,7 +117,6 @@ class SNAKE:
               elif self.previous_direction == Vector2(1, 0):
                   screen.blit(self.body_right_bow, block_rect)
           else:
-            # Resto del cuerpo → gráficos normales
             if not is_curve:
                 if previous_block.x == next_block.x:
                     screen.blit(self.body_vertical, block_rect)
@@ -144,14 +145,8 @@ class SNAKE:
     elif tail_relation == Vector2(-1,0): self.tail = self.tail_right
     elif tail_relation == Vector2(0,1): self.tail = self.tail_up
     elif tail_relation == Vector2(0,-1): self.tail = self.tail_down
-    #for block in self.body:
-    #  x_pos = int(block.x * cell_size)
-    #  y_pos = int(block.y * cell_size)
-    #  block_rect = pygame.Rect(x_pos , y_pos,cell_size,cell_size )
-    #  pygame.draw.rect(screen, (127,174,231), block_rect) 
 
   def move_snake(self):
-
     self.just_turned = self.direction != self.previous_direction
     if self.just_turned:
         self.turn_frames = 3  # mostrá el bow de curva por 3 frames
@@ -196,7 +191,7 @@ class FRUIT:
 
   def randomize(self):
     self.x = random.randint(0, cell_number - 1)
-    self.y = random.randint(0, cell_number - 2)  # por si es 2 celdas verticales
+    self.y = random.randint(0, cell_number - 2)  # 2 vertical cells
 
     self.pos = Vector2(self.x, self.y)
 
@@ -210,7 +205,6 @@ class FRUIT:
       self.size_cells = (1,2)
 
   def draw_fruit(self):
-    # posición base (top-left celda)
     x = int(self.pos.x * cell_size)
     y = int(self.pos.y * cell_size)
 
@@ -220,7 +214,6 @@ class FRUIT:
       screen.blit(self.current_image, image_rect)
 
     else:
-      # ocupa 2 celdas pero UNA sola imagen
       rect = pygame.Rect(x, y, cell_size, cell_size * 2)
       image_rect = self.current_image.get_rect(center=rect.center)
       screen.blit(self.current_image, image_rect)
@@ -298,7 +291,6 @@ class MAIN:
     score_rect = score_surface.get_rect(center = (score_x,score_y))
     screen.blit(score_surface,score_rect)
     
-
 pygame.mixer.pre_init(44100,-16,2,512)
 pygame.init()
 cell_size = 40 
