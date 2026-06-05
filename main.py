@@ -73,7 +73,7 @@ class SNAKE:
           if index == 1: 
             if self.direction == Vector2(0,0):
               screen.blit(self.body_right_bow, block_rect)
-            if self.turn_frames > 0 and is_curve:
+            elif self.turn_frames > 0 and is_curve:
               # esquina TL
               if (previous_block.x == -1 and next_block.y == -1) or \
                 (previous_block.y == -1 and next_block.x == -1):
